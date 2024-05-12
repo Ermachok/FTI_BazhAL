@@ -1,67 +1,5 @@
 from matplotlib import pyplot
-
-
-class Interval:
-    def __init__(self, interval: list = None, inf: float = None, sup: float = None):
-        if interval:
-            self.__inf = interval[0]
-            self.__sup = interval[1]
-        else:
-            self.__inf = inf
-            self.__sup = sup
-
-    def change_limits(self, inf_addition=None, sup_addition=None, both_change=None):
-        if both_change:
-            return Interval([self.__inf - both_change, self.__sup + both_change])
-        else:
-            return Interval([self.__inf + inf_addition, self.__sup - sup_addition])
-
-    def multiply_on_number(self, number=None):
-        if number:
-            return Interval([self.__inf * number, self.__sup * number])
-
-    def check_zero(self):
-        if self.__inf <= 0 <= self.__sup:
-            return True
-        else:
-            return False
-
-    def get_interval(self, accuracy: int = 12, list_type=True):
-        if list_type:
-            return [round(self.__inf, accuracy), round(self.__sup, accuracy)]
-
-    def get_middle(self):
-        return round(self.__inf + (self.__sup - self.__inf) / 2, 3)
-
-    def get_width(self):
-        return self.__sup - self.__inf
-
-
-def interval_multiplication(interval_1: Interval, interval_2: Interval) -> Interval:
-    interval_limits_1 = interval_1.get_interval()
-    interval_limits_2 = interval_2.get_interval()
-
-    multiplications = [elem_1 * elem_2
-                       for elem_2 in interval_limits_2
-                       for elem_1 in interval_limits_1]
-
-    return Interval([min(multiplications), max(multiplications)])
-
-
-def interval_subtraction(interval_1: Interval, interval_2: Interval) -> Interval:
-    return Interval([interval_1.get_interval()[0] - interval_2.get_interval()[1],
-                     interval_1.get_interval()[1] - interval_2.get_interval()[0]])
-
-
-def interval_division(interval_1: Interval, interval_2: Interval) -> Interval:
-    interval_limits_1 = interval_1.get_interval()
-    interval_limits_2 = interval_2.get_interval()
-
-    divisions = [elem_1 / elem_2
-                 for elem_2 in interval_limits_2
-                 for elem_1 in interval_limits_1]
-
-    return Interval([min(divisions), max(divisions)])
+from intervals_definition import Interval, IntervalAlgebra
 
 
 if __name__ == '__main__':
@@ -70,7 +8,10 @@ if __name__ == '__main__':
     c = Interval([0.95, 0.95])
     d = Interval([1, 1])
 
-    ans = interval_subtraction(interval_multiplication(a, d), interval_multiplication(b, c))
+    algebra = IntervalAlgebra()
+
+    ans = algebra.interval_subtraction(algebra.interval_multiplication(a, d),
+                                       algebra.interval_multiplication(b, c))
 
     step = 1E-4
     alpha = 0
@@ -90,11 +31,12 @@ if __name__ == '__main__':
                                       c_1.get_interval(),
                                       d_1.get_interval()))
 
-        ans = interval_subtraction(interval_multiplication(a_1, d_1), interval_multiplication(b_1, c_1))
+        ans = algebra.interval_subtraction(algebra.interval_multiplication(a_1, d_1),
+                                           algebra.interval_multiplication(b_1, c_1))
         print('a * d = {ad}'
               '\nc * b = {cb}'
-              '\nad - cb = {ad_cb}'.format(ad=interval_multiplication(a_1, d_1).get_interval(),
-                                           cb=interval_multiplication(b_1, c_1).get_interval(),
+              '\nad - cb = {ad_cb}'.format(ad=algebra.interval_multiplication(a_1, d_1).get_interval(),
+                                           cb=algebra.interval_multiplication(b_1, c_1).get_interval(),
                                            ad_cb=ans.get_interval()))
 
 

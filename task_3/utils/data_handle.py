@@ -4,7 +4,7 @@ import numpy as np
 
 def get_voltage_data(voltages=None):
     if voltages is None:
-        voltages = ['-0.45', '-0.35', '-0.25', '-0.15', '-0.05', '0', '0.15', '0.25', '0.35', '0.45']
+        voltages = ['-0.45', '-0.35', '-0.25', '-0.15', '-0.05', '0', '0.05', '0.15', '0.25', '0.35', '0.45']
 
     calibration_data = {}
     for voltage in voltages:
@@ -21,7 +21,6 @@ def get_voltage_data(voltages=None):
                         for ch in range(8):
                             calibration_data[voltage][ch].append(float(line.split(' ')[ch + 1]))
 
-            # print(file_path)
     return calibration_data
 
 
@@ -39,21 +38,23 @@ def preparing_for_models(all_voltages: dict, channel: int):
     return x_arr, y_arr
 
 
-def get_whisker(all_data: dict, voltage: str, channel: int) -> list:
-
+def get_whisker_data(y_data: list) -> tuple:
+    # TODO change 5120 to the number of measured points (5120 = 1024 * 5)
+    voltages = ['-0.45', '-0.35', '-0.25', '-0.15', '-0.05', '0', '0.05', '0.15', '0.25', '0.35', '0.45']
+    x_data = [float(vol) for vol in voltages]
+    all_q1 = []
+    all_q3 = []
     whiskers = []
-    for measurements_number in range(5):
-        counts = 1024
-        indexes = [measurements_number * counts, measurements_number * counts + counts]
-
-        y_data = all_data[voltage][channel - 1][indexes[0]:indexes[1]]
-        q1 = np.percentile(y_data, 25)
-        q3 = np.percentile(y_data, 75)
-
+    for j in range(len(x_data)):
+        q1 = np.percentile(y_data[5120 * j:5120 * (j + 1)], 25)
+        q3 = np.percentile(y_data[5120 * j:5120 * (j + 1)], 75)
         whisker_length = 1.5 * (q3 - q1)
+
+        all_q1.append(q1)
+        all_q3.append(q3)
         whiskers.append(whisker_length)
 
-    return whiskers
+    return x_data, all_q1, all_q3, whiskers
 
 
 if __name__ == '__main__':

@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 import pandas as pd
-from task_3.utils.data_handle import get_whisker
+
+from intervals_definition import IntervalAlgebra, Interval
+from task_3.utils.data_handle import get_whisker_data
 
 
 def plot_single_voltage(all_data: dict, voltage: str, channel: int) -> None:
@@ -39,7 +42,7 @@ def plot_violin(all_data: dict, channel: int):
     Plots violin plot
     :param all_data:
     :param channel:
-    :return:
+    :return: none
     """
     for key, value in all_data.items():
         data = {'Voltage': [float(key) for _ in range(len(value[channel - 1]))], 'Counts': value[channel - 1]}
@@ -47,8 +50,7 @@ def plot_violin(all_data: dict, channel: int):
 
         sns.violinplot(x='Voltage', y='Counts', data=df, inner='box', fill=False)
 
-    plt.ylim(0, 16E3)
-    plt.title(f'Channel {channel+1}')
+    plt.title(f'Channel {channel}')
     plt.grid()
     plt.show()
 
@@ -63,27 +65,38 @@ def plot_all_models(x_arr, y_arr, x_extend=None, y_ols=None, y_ridge=None, y_las
     :param y_lasso: lasso opt.. data
     :return: shows plot
     """
-    #  CHECK  DATA AVAILABILITY NEEDED
+
+    df = pd.DataFrame({'x': x_arr[0], 'y': y_arr[0]})
+
+    x_whiskers, q1, q3, whiskers = get_whisker_data(y_arr)
+
+    q1 = np.array(q1)
+    q3 = np.array(q3)
+    whiskers = np.array(whiskers)
+
+    # TODO CHECK  DATA AVAILABILITY
     plt.plot(x_extend, y_ridge, color='red', label='Fit (Ridge)')
     plt.plot(x_extend, y_ols, color='blue', label='Fit (OLS)')
     plt.plot(x_extend, y_lasso, color='green', label='Fit (Lasso)')
     plt.scatter(x_arr, y_arr, s=2, zorder=5)
+
+    sns.lineplot(data=df, x='x', y='y')
+
+    plt.fill_between(x_whiskers, q3 + whiskers, q1 - whiskers)
+
+
+    plt.xlim(-0.5, 0.5)
+    plt.ylim(0, 16E3)
     plt.legend()
     plt.grid()
     plt.show()
 
 
-def plot_fill_between_quartile(x_arr, y_arr):
 
-    plt.scatter(x_arr, y_arr, s=2, zorder=5, label='Initial data')
-    for measurement_number in range(8):
-        whisker = get_whisker(y_arr)
+def plot_intervals(interval_list: list[Interval]):
+    for index, interval in enumerate(interval_list):
+        plt.plot([index, index], interval.get_interval())
 
-    x_arr = x_arr.reshape(-1)
-    plt.fill_between(x_arr, y_arr - whisker, y_arr + whisker, alpha=0.2)
-
-    plt.legend()
-    plt.grid()
     plt.show()
 
 
