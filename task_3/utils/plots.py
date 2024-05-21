@@ -95,7 +95,7 @@ def plot_all_models(x_arr, y_arr, x_extend=None, y_ols=None, y_ridge=None, y_las
 
 def plot_intervals(interval_list: list[Interval]):
     for index, interval in enumerate(interval_list):
-        plt.plot([index, index], interval.get_interval())
+        plt.plot([index, index], interval.get_interval(list_type=True))
 
     plt.show()
 

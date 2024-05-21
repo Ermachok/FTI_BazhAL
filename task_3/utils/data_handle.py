@@ -8,20 +8,57 @@ def get_voltage_data(voltages=None):
 
     calibration_data = {}
     for voltage in voltages:
-        calibration_data[voltage] = [[] for _ in range(8)]
-
+        drs_channels_number = 8
+        calibration_data[voltage] = [[] for _ in range(drs_channels_number)]
         folder_path = f'DRS_data/{voltage}_volts'
         files = os.listdir(folder_path)
-
-        for file in files:
-            file_path = os.path.join(folder_path, file)
+        for file_name in files:
+            file_path = os.path.join(folder_path, file_name)
             with open(file_path, 'r') as file_data:
                 for line in file_data.readlines():
-                    if len(line) > 10:
-                        for ch in range(8):
+                    if len(line) > 10:  # check not empty or strange line?
+                        for ch in range(drs_channels_number):
                             calibration_data[voltage][ch].append(float(line.split(' ')[ch + 1]))
 
     return calibration_data
+
+
+
+def get_single_voltage(voltage) -> dict:
+    calibration_data = {}
+    drs_channels_number = 8
+    adc_counts = 1024
+    calibration_data[f'{voltage}_Volts'] = {ch+1: [] for ch in range(drs_channels_number)}
+    folder_path = f'DRS_data/{voltage}_volts'
+    files = os.listdir(folder_path)
+    for file_name in files:
+        file_path = os.path.join(folder_path, file_name)
+        stop_point = stop_point_determination(file_name)
+        with open(file_path, 'r') as file_data:
+            voltage_data = file_data.readlines()
+            for ch in range(drs_channels_number):
+                ch_data = []
+                for line in voltage_data:
+                    if len(line) > 10:  # check not empty or strange line ?
+                        ch_data.append(float(line.split(' ')[ch+1]))
+                right_order_data = ch_data[adc_counts - stop_point:] + ch_data[:adc_counts - stop_point]
+                #right_order_data = ch_data
+
+                calibration_data[f'{voltage}_Volts'][ch+1].append(right_order_data)
+    return calibration_data
+
+
+def stop_point_determination(file_name: str) -> int:
+    pattern = 'sp'
+    pattern_index = file_name.index(pattern)
+    stop_point = ''
+    for sym in file_name[pattern_index + len(pattern):]:
+        if sym.isdigit():
+            stop_point += sym
+
+    return int(stop_point)
+
+
 
 
 def preparing_for_models(all_voltages: dict, channel: int):
