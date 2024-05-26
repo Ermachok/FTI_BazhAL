@@ -2,9 +2,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import pandas as pd
+import statsmodels.api as sm
 
 from intervals_definition import IntervalAlgebra, Interval
 from task_3.utils.data_handle import get_whisker_data
+
+
+def plot_Qplot(data: list) -> None:
+    fig = sm.qqplot(np.array(data), line='45')
+    plt.show()
 
 
 def plot_single_voltage(all_data: dict, voltage: str, channel: int) -> None:
@@ -94,9 +100,13 @@ def plot_all_models(x_arr, y_arr, x_extend=None, y_ols=None, y_ridge=None, y_las
 
 
 def plot_intervals(interval_list: list[Interval]):
+    fig, ax = plt.subplots()
     for index, interval in enumerate(interval_list):
-        plt.plot([index, index], interval.get_interval(list_type=True))
-
+        ax.plot([index, index], interval.get_interval(list_type=True))
+    #plt.xticks([0, 1, 2, 3, 4])
+    plt.xlim(-0.1)
+    plt.ylim(10000)
+    plt.grid()
     plt.show()
 
 

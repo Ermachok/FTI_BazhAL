@@ -6,8 +6,8 @@ class Interval:
             self.__inf = interval[0]
             self.__sup = interval[1]
         elif mid and rad:
-            self.__inf = mid + rad
-            self.__sup = mid - rad
+            self.__inf = mid - rad
+            self.__sup = mid + rad
         else:
             self.__inf = inf
             self.__sup = sup
@@ -19,8 +19,7 @@ class Interval:
             return Interval([self.__inf + inf_addition, self.__sup - sup_addition])
 
     def multiply_on_number(self, number=None):
-        if number:
-            return Interval([self.__inf * number, self.__sup * number])
+        return Interval([self.__inf * number, self.__sup * number])
 
     def check_zero(self):
         if self.__inf <= 0 <= self.__sup:
@@ -54,6 +53,15 @@ class IntervalAlgebra:
                            for elem_1 in interval_limits_1]
 
         return Interval([min(multiplications), max(multiplications)])
+
+
+    @staticmethod
+    def interval_addition(interval_1: Interval, interval_2: Interval) -> Interval:
+        inf_interval_1, sup_interval_1 = interval_1.get_interval(set_type=True)
+        inf_interval_2, sup_interval_2 = interval_2.get_interval(set_type=True)
+
+        return Interval([inf_interval_1 + inf_interval_2,
+                         sup_interval_1 + sup_interval_2])
 
     @staticmethod
     def interval_subtraction(interval_1: Interval, interval_2: Interval) -> Interval:

@@ -1,4 +1,3 @@
-from matplotlib import pyplot
 from intervals_definition import Interval, IntervalAlgebra
 
 
