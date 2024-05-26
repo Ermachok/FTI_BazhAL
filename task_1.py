@@ -26,20 +26,20 @@ if __name__ == '__main__':
         print('\nalpha = {}\n'
               'a = {}, b = {}\n'
               'c = {}, d = {}'.format(alpha,
-                                      a_1.get_interval(),
-                                      b_1.get_interval(),
-                                      c_1.get_interval(),
-                                      d_1.get_interval()))
+                                      a_1.get_interval(list_type=True),
+                                      b_1.get_interval(list_type=True),
+                                      c_1.get_interval(list_type=True),
+                                      d_1.get_interval(list_type=True)))
 
         ans = algebra.interval_subtraction(algebra.interval_multiplication(a_1, d_1),
                                            algebra.interval_multiplication(b_1, c_1))
         print('a * d = {ad}'
               '\nc * b = {cb}'
-              '\nad - cb = {ad_cb}'.format(ad=algebra.interval_multiplication(a_1, d_1).get_interval(),
-                                           cb=algebra.interval_multiplication(b_1, c_1).get_interval(),
-                                           ad_cb=ans.get_interval()))
+              '\nad - cb = {ad_cb}'.format(ad=algebra.interval_multiplication(a_1, d_1).get_interval(list_type=True),
+                                           cb=algebra.interval_multiplication(b_1, c_1).get_interval(list_type=True),
+                                           ad_cb=ans.get_interval(list_type=True)))
 
 
     else:
         print('-' * 50)
-        print(alpha, ans.get_interval())
+        print(alpha, ans.get_interval(list_type=True))

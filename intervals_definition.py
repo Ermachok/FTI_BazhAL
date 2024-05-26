@@ -46,8 +46,8 @@ class Interval:
 class IntervalAlgebra:
     @staticmethod
     def interval_multiplication(interval_1: Interval, interval_2: Interval) -> Interval:
-        interval_limits_1 = interval_1.get_interval()
-        interval_limits_2 = interval_2.get_interval()
+        interval_limits_1 = interval_1.get_interval(list_type=True)
+        interval_limits_2 = interval_2.get_interval(list_type=True)
 
         multiplications = [elem_1 * elem_2
                            for elem_2 in interval_limits_2
@@ -57,13 +57,17 @@ class IntervalAlgebra:
 
     @staticmethod
     def interval_subtraction(interval_1: Interval, interval_2: Interval) -> Interval:
-        return Interval([interval_1.get_interval()[0] - interval_2.get_interval()[1],
-                         interval_1.get_interval()[1] - interval_2.get_interval()[0]])
+        inf_interval_1, sup_interval_1 = interval_1.get_interval(set_type=True)
+        inf_interval_2, sup_interval_2 = interval_2.get_interval(set_type=True)
+
+
+        return Interval([inf_interval_1 - sup_interval_2,
+                         sup_interval_1 - inf_interval_2])
 
     @staticmethod
     def interval_division(interval_1: Interval, interval_2: Interval) -> Interval:
-        interval_limits_1 = interval_1.get_interval()
-        interval_limits_2 = interval_2.get_interval()
+        interval_limits_1 = interval_1.get_interval(list_type=True)
+        interval_limits_2 = interval_2.get_interval(list_type=True)
 
         divisions = [elem_1 / elem_2
                      for elem_2 in interval_limits_2

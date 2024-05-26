@@ -2,10 +2,10 @@ from intervals_definition import IntervalAlgebra, Interval
 import statistics
 
 
-def made_intervals(voltage_list: list, radius_percent: float = None) -> list[Interval]:
+def made_intervals(voltage_list: list, radius_percent: float = None, radius_counts: int = None) -> list[Interval]:
 
     if not radius_percent:
-        radius = statistics.mean(voltage_list) * 0.1
+        radius = radius_counts
     else:
         radius = statistics.mean(voltage_list) * radius_percent / 100
 
